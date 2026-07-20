@@ -24,7 +24,6 @@ experiments/               All experiment code (see below)
 experiments/results/       Primary-run outputs: per-method predictions,
                            LLM-label + generation/embedding caches, metrics
 experiments/results_q3/    Qwen3-14B re-run used for RQ5
-ICSOC_main.tex             The paper (LLNCS), reference.bib
 ```
 
 Key experiment modules: `common.py` (config + cached Ollama client),
