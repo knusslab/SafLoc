@@ -1,0 +1,382 @@
+% ICSOC_main.tex -- Springer LLNCS (llncs) version of the paper
+% "Silent Failures in Stateless Systems: A Tri-Context RAG-Augmented LLM
+%  for Fault Localization in Serverless Applications".
+%
+% Content transferred from the ACM sigconf manuscript (sigconf.tex) and
+% adapted to the Springer Lecture Notes in Computer Science format used by
+% ICSOC 2026. ACM-specific scaffolding (rights management, CCS concepts,
+% BibTeX logo macro) has been removed; all technical content is preserved.
+%
+\documentclass[runningheads]{llncs}
+%
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+%
+% If you use the hyperref package, please uncomment the following two lines
+% to display URLs in blue roman font according to Springer's eBook style:
+%\usepackage{color}
+%\renewcommand\UrlFont{\color{blue}\rmfamily}
+%\urlstyle{rm}
+%
+\begin{document}
+%
+\title{Silent Failures in Stateless Systems: A Tri-Context RAG-Augmented LLM for Fault Localization in Serverless Applications}
+%
+\titlerunning{Silent Failures in Stateless Systems}
+%
+% Author and affiliation removed for anonymous (double-blind) submission.
+% Restore the real author and institute block for the camera-ready version.
+\author{Anonymous Author(s)}
+%
+\authorrunning{Anonymous Author(s)}
+%
+\institute{Affiliation withheld for double-blind review}
+%
+\maketitle              % typeset the header of the contribution
+%
+\begin{abstract}
+Serverless platforms free developers from managing infrastructure, but they also hide much of what happens when an application fails. Functions run as short-lived, stateless invocations, and the three artifacts that explain a failure, the source code, the configuration, and the runtime log, are recorded in different places and rarely inspected together. We call the resulting hard-to-trace faults \emph{silent failures}. To measure how common they are, we collected 107 fault triplets from closed GitHub issues in Knative, each pairing the reported runtime log with the code and configuration changes of the pull request that fixed it. In 63.55\% of these cases the fix spans more than one artifact type, and only 7.48\% involve the log alone; we read this co-occurrence as a proxy for the evidence a correct diagnosis must connect. Existing fault-localization tools, including recent LLM-based ones, read only one of these artifacts at a time. We therefore propose \textsc{SafLoc}, a Tri-Context Retrieval-Augmented Generation (TC-RAG) pipeline that indexes code, configuration, and logs in three separate stores, retrieves a fixed amount of evidence from each, and asks a large language model for a structured diagnosis: the faulty file and symbol, the symptom, the root-cause category, and the supporting evidence. Two properties follow from this design by construction: retrieval always covers all three artifact types, and the predicted location is always a file that exists in the corpus, so fabricated file paths cannot occur. Compared with ten state-of-the-art baselines under an identical local setup, \textsc{SafLoc} is the only method that performs well on localization, root-cause prediction, and hallucination at the same time: it matches the best specialized baseline on each individual metric, and it is strongest exactly on the configuration-origin and cross-artifact faults that single-artifact methods miss.
+
+\keywords{serverless computing \and fault localization \and retrieval-augmented generation \and root cause analysis \and large language models \and Knative}
+\end{abstract}
+
+\section{Introduction}
+
+Serverless computing, often implemented as function-as-a-service (FaaS), lets developers deploy individual functions to the cloud without provisioning or managing the underlying servers~\cite{castro2019rise,baldini2017serverless}. The platform handles scaling, scheduling, and resource allocation, and developers are billed only for the time their code actually runs~\cite{castro2019rise}. Since AWS introduced Lambda in 2014, the model has seen rapid production adoption: a study of a large commercial FaaS provider found that most applications are short-lived and invoked infrequently, which stresses exactly the observability boundaries we examine~\cite{shahrad2020serverless}. Open-source platforms such as Knative, OpenFaaS, and OpenWhisk have made the same execution model available on the Kubernetes clusters that organizations already operate~\cite{eismann2022state}.
+
+The appeal of serverless computing rests on the same property that makes it hard to debug: statelessness~\cite{hellerstein2019serverless,jangda2019formal}. Each invocation runs in an isolated, short-lived container that is torn down once the function returns or times out, so there is no persistent process to attach a debugger to, and the platform adds layers, such as an ingress router, an autoscaler, and a service mesh, that developers cannot see inside. Empirical studies consistently rank debugging and observability among the most severe obstacles serverless developers report~\cite{wen2021empirical,eismann2022state}. When something goes wrong, a developer is left with three sources of evidence: the runtime log, the configuration that governed provisioning and routing, and the source code. None tells the whole story on its own: a log can show that a request timed out without revealing whether the cause was a slow call in the code or an undersized resource limit in the configuration, and a configuration file can show a missing permission without showing which line of code needed it.
+
+This combination of limited observability and evidence scattered across disconnected artifacts is what we call a \emph{silent failure}: a fault whose root cause is not visible from any single artifact and requires a developer, or a diagnostic tool, to correlate evidence across all three. Existing automated fault localization approaches, including large language model based tools, typically consume only one of these artifacts at a time, most commonly the log. This narrows the model's context to whatever happens to appear in the log message and forces it to guess at the parts of the story that live elsewhere, in the configuration or in the code.
+
+This paper asks two questions: how often do real serverless faults actually involve evidence from more than one artifact, and how should a diagnostic tool gather its evidence when they do? We contribute (i) a dataset of 107 real fault triplets from closed Knative issues, each pairing a runtime log with the code and configuration changes of its resolving pull request; (ii) \textsc{SafLoc}, a Tri-Context Retrieval-Augmented Generation (TC-RAG) pipeline that retrieves balanced evidence from separate code, configuration, and log indexes and produces a structured, grounded diagnosis; (iii) two by-construction properties of this design, coverage of every artifact type and zero hallucinated file paths; and (iv) a comparison against ten state-of-the-art baselines with bootstrap confidence intervals and a per-category breakdown. The evaluation is organized around five research questions:
+\begin{description}
+\item[RQ1 (Cross-artifact evidence):] For what fraction of real serverless faults does the resolving fix span more than one artifact, and what does that imply for single-artifact diagnosis?
+\item[RQ2 (Localization):] Does \textsc{SafLoc} localize faults as accurately as state-of-the-art baselines, and does stratified tri-context retrieval outperform an undifferentiated combined index?
+\item[RQ3 (Root-cause analysis):] How accurate, and how balanced across fault categories, is \textsc{SafLoc}'s root-cause prediction relative to specialized and LLM-based baselines?
+\item[RQ4 (Grounding):] Does corpus-grounded decoding eliminate hallucinated fault locations?
+\item[RQ5 (Retrieval vs.\ capacity):] Is \textsc{SafLoc}'s performance driven by its retrieval architecture or by the capacity of the underlying LLM?
+\end{description}
+We answer RQ1 in Section~\ref{sec:modality} and RQ2--RQ5 in Section~\ref{sec:results}.
+
+The remainder of the paper is organized as follows. Section~\ref{sec:related} surveys related work. Section~\ref{sec:motivation} presents our empirical motivation. Section~\ref{sec:architecture} defines the task and describes the \textsc{SafLoc} architecture and its formal properties. Section~\ref{sec:evaluation} reports the experimental comparison. Section~\ref{sec:threats} discusses threats to validity.
+
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Empirical Studies of Serverless and Cloud Faults}
+
+Wen et al.\ analyzed 619 Stack Overflow discussions and showed that serverless development is qualitatively harder than traditional development, but their taxonomy mixes faults with general usage questions and does not link problems back to diagnosable artifacts~\cite{wen2021empirical}. Xie et al.\ focus on faults specifically, deriving from 546 real-world issues a root-cause taxonomy dominated by programming, configuration, and dependency errors~\cite{xie2025understanding}. We adopt their taxonomy both to motivate our dataset (Section~\ref{sec:motivation}) and as the categories \textsc{SafLoc} predicts.
+
+\subsection{LLM-Based Fault Localization and Root Cause Analysis}
+
+Before LLMs, log-based diagnosis relied on sequence models such as DeepLog, which detects anomalous log patterns but cannot explain them, having no access to code or configuration~\cite{du2017deeplog}. Among LLM-based systems, LLMAO localizes buggy lines from source code alone~\cite{yang2024llmao}, FaceIt localizes configuration errors purely from logs~\cite{shan2024faceit}, and RCACopilot, the system closest to ours, predicts root-cause categories for cloud incidents from retrieved diagnostic context~\cite{chen2024rcacopilot}. Each conditions on a single artifact type or on manually curated handlers, and none quantifies how often a correct diagnosis needs more than one artifact; we compare single- and multi-artifact retrieval directly and measure exactly that on real data.
+
+\subsection{Retrieval-Augmented Generation for Software Artifacts}
+
+RAG grounds generation in retrieved passages rather than parametric memory~\cite{lewis2020rag}, and code-oriented systems such as RepoCoder apply it to repository-level completion, retrieving from a single artifact type~\cite{zhang2023repocoder}. Liu et al.\ show that models use long, heterogeneous contexts unevenly, with content in the middle of the window often ignored~\cite{liu2024lostinmiddle}; this context-imbalance risk directly motivates the stratified retrieval design of Section~\ref{sec:stratified}.
+
+\subsection{Multi-Source and Multi-Modal Diagnosis}
+
+In the microservice setting, HADES fuses logs and metrics through cross-modal attention~\cite{lee2023hades} and Eadro jointly reasons over logs, metrics, and traces~\cite{lee2023eadro}; both confirm that single-source monitoring misses faults that only manifest jointly across sources. Where they train specialized fusion networks on continuous monitoring streams, \textsc{SafLoc} lets a general-purpose LLM reason over retrieved evidence from all three artifact types, which requires no live training data, a practical necessity for open-source projects such as Knative, where issue reports are the primary record of a fault.
+
+\subsection{Summary and Positioning}
+\label{sec:relwork-summary}
+
+Table~\ref{tab:sota} consolidates the approaches above, plus a few foundational systems, into four methodological families. Two patterns emerge: no prior system targets the stateless, short-lived execution model of serverless functions, in which code, configuration, and logs can only be correlated after the invocation is torn down; and the most recent LLM-based systems, though increasingly retrieval-grounded, still condition on a single artifact type. \textsc{SafLoc} occupies the cell the table leaves empty: an LLM-based, retrieval-augmented approach whose retrieval is tri-modal over code, configuration, and logs, and whose deployment target is serverless.
+
+\begin{table}[t]
+  \centering
+  \caption{Landscape of representative fault-localization, anomaly-detection, and root-cause-analysis approaches, grouped by methodological family. The \textbf{Code} column reports whether a public artifact is available to the best of our knowledge (\emph{Yes}: released; \emph{Part.}: partial or community re-implementation; \emph{No}: not released). \textsc{SafLoc} is our proposed framework.}
+  \label{tab:sota}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabularx}{\linewidth}{@{}Y Y Y c@{}}
+    \toprule
+    \textbf{Approach (Ref.)} & \textbf{Methodology} & \textbf{Target Environment} & \textbf{Code} \\
+    \midrule
+    \multicolumn{4}{@{}l}{\emph{LLM-based approaches}}\\
+    \addlinespace[1pt]
+    \textsc{SafLoc} (ours) & Tri-context RAG + LLM & Serverless (Knative) & Yes \\
+    LLMAO~\cite{yang2024llmao} & Fine-tuned LLM adapters & Monolithic source code & Yes \\
+    FaceIt~\cite{shan2024faceit} & Two-stage LLM prompting & Distributed (Hadoop) & Yes \\
+    RCACopilot~\cite{chen2024rcacopilot} & LLM + diagnostic retrieval & Cloud microservices & No \\
+    RepoCoder~\cite{zhang2023repocoder} & Iterative RAG & Code repositories & Yes \\
+    \addlinespace[2pt]
+    \multicolumn{4}{@{}l}{\emph{Deep-learning approaches}}\\
+    \addlinespace[1pt]
+    DeepLog~\cite{du2017deeplog} & LSTM log modeling & Distributed / general logs & Part. \\
+    HADES~\cite{lee2023hades} & Cross-modal attention & Software systems & Part. \\
+    Eadro~\cite{lee2023eadro} & Multi-source deep model & Microservices & Yes \\
+    \addlinespace[2pt]
+    \multicolumn{4}{@{}l}{\emph{Machine-learning approaches}}\\
+    \addlinespace[1pt]
+    MEPFL~\cite{zhou2019mepfl} & Supervised trace classifiers & Microservices & Yes \\
+    TraceRCA~\cite{li2021tracerca} & Trace-based ML analysis & Microservices & Yes \\
+    \addlinespace[2pt]
+    \multicolumn{4}{@{}l}{\emph{Rule-based / heuristic approaches}}\\
+    \addlinespace[1pt]
+    MicroRCA~\cite{wu2020microrca} & Attributed-graph propagation & Microservices & Yes \\
+    Pinpoint~\cite{chen2002pinpoint} & Clustering + dependency analysis & Internet services & No \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Background and Motivation}
+\label{sec:motivation}
+
+\subsection{Root Causes and the Single-Artifact Gap}
+
+Xie et al.\ analyzed 546 real-world serverless faults and found three dominant root-cause categories: Programming Error (31.14\%), Configuration Error (25.46\%), and Dependency Error (21.98\%)~\cite{xie2025understanding}. Each implicates a different artifact: programming errors point to the code, configuration errors to deployment manifests and platform settings, and dependency errors often surface only in the runtime log. Existing workflows do not bridge this gap. Knative's own troubleshooting guide asks developers to check pod, route, ingress, and revision status by hand; a log-only tool such as DeepLog~\cite{du2017deeplog} sees what crashed but not why, and a code-only tool such as LLMAO~\cite{yang2024llmao} cannot see what happened at runtime. A single-artifact approach therefore systematically misses the fault categories its artifact does not cover.
+
+\subsection{Dataset Construction from Real-World Issues}
+\label{sec:dataset}
+
+To measure how often the evidence for a real fault spans multiple artifacts, we built a dataset of fault triplets from Knative, a widely used open-source serverless platform built on Kubernetes. Figure~\ref{fig:dataset_pipeline} shows the three-stage filtering pipeline and the number of issues surviving each stage.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{Figures/Dataset_collection_pipeline.png}
+  \caption{Dataset collection pipeline: from 4{,}083 raw closed Knative issues to 107 validated fault triplets.}
+  \label{fig:dataset_pipeline}
+\end{figure}
+
+Starting from 4{,}083 raw closed issues in the Knative GitHub repositories, we kept only issues closed by a linked pull request and filed on or after December 1st, 2024; this cutoff targets the current release line and limits data-leakage risk, since it sits at or after the likely pretraining cutoff of our diagnosis model and any residual memorization would inflate all LLM-based methods equally. We then dropped issues with no fenced code or log block and no error keyword, and issues whose closing pull request or resulting triplet could not be validated, leaving 107 triplets. Each pairs the reported runtime log ($L$) with the code ($C$) and configuration ($K$) changes of the closing pull request, plus metadata recording which artifacts were available.
+
+\subsection{Modality Distribution and the Case for Cross-Artifact Evidence}
+\label{sec:modality}
+
+Table~\ref{tab:modality} shows the distribution of artifact combinations across the 107 triplets.
+
+\begin{table}
+  \centering
+  \caption{Modality distribution across the 107 extracted fault triplets.}
+  \label{tab:modality}
+  \begin{tabular}{lcc}
+    \toprule
+    Modality Bucket        & Count & Percent \\
+    \midrule
+    Log only               & 8   & 7.48\%  \\
+    Log + Config           & 5   & 4.67\%  \\
+    Log + Code             & 53  & 49.53\% \\
+    Log + Code + Config    & 15  & 14.02\% \\
+    Other                  & 26  & 24.30\% \\
+    \midrule
+    \textbf{Total}         & \textbf{107} & \textbf{100\%} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Only 8 triplets (7.48\%) involve the log alone, while 68 of 107 (63.55\%) involve more than one artifact type, most often log and code (49.53\%) or all three together (14.02\%). These buckets record which artifacts the fix \emph{touched}, a proxy for, not a measurement of, the evidence needed to diagnose the fault (Section~\ref{sec:threats}); to the extent the proxy holds, a tool that inspects one artifact lacks part of the evidence on most faults, a conditional that Section~\ref{sec:architecture} makes precise. \emph{Answer to RQ1:} the resolving fix spans more than one artifact for $63.55\%$ of faults and only $7.48\%$ present a log in isolation, so, read as an availability-based estimate, a single-artifact tool lacks part of the fix-relevant evidence for roughly two-thirds of cases.
+
+\section{System Architecture: SafLoc}
+\label{sec:architecture}
+
+\subsection{Overview and Task Definition}
+
+We frame the task as follows. Given source code files $\mathcal{C} = \{f_1, \dots, f_m\}$, configuration files $\mathcal{K} = \{g_1, \dots, g_p\}$, a runtime log $L$, and a natural-language fault description $q$ derived from the log, a diagnostic system $\Phi : (\mathcal{C}, \mathcal{K}, L, q) \to y$ must produce a structured diagnosis $y = (f_{loc},\ s_{sym},\ r_{cause},\ e)$: the fault location $f_{loc}$ (a file path and, where identifiable, a symbol), a symptom category $s_{sym}$, a root-cause category $r_{cause}$ from the taxonomy of Xie et al.~\cite{xie2025understanding}, and the supporting evidence chunks $e$. We call a system \emph{single-artifact} if it conditions on only one of $\mathcal{C}$, $\mathcal{K}$, or $L$, and \emph{multi-artifact} otherwise. Under the proxy assumption of Section~\ref{sec:modality}, a single-artifact system lacks part of the fix-relevant evidence on the 63.55\% of faults whose fix spans several artifacts, independent of the capability of the underlying model.
+
+\textsc{SafLoc} (Silent Failure Localization) is therefore multi-artifact by design: it extends the RAG paradigm of Lewis et al.~\cite{lewis2020rag} to treat code, configuration, and logs as three parallel, equally weighted sources of evidence rather than one undifferentiated document store. The pipeline has three stages, ingestion and indexing, stratified retrieval, and augmented prompting, and returns a structured output a developer can act on directly.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figures/SafLoc_Architecture.png}
+  \caption{Overview of SafLoc Architecture.}
+  \label{fig:safloc_architecture}
+\end{figure}
+
+\subsection{Ingestion and Indexing}
+
+Each artifact is split into overlapping chunks, and each chunk $c$ is mapped to a dense vector by the BGE-M3 embedding model~\cite{chen2024bgem3}, $\phi : \text{chunk} \to \mathbb{R}^{1024}$. Rather than storing all chunks in one shared vector index, \textsc{SafLoc} maintains three separate stores,
+\begin{equation}
+  D_t = \{\, c : c \in \text{Chunks}(a),\ a \text{ of artifact type } t \,\}, \quad t \in \{code, config, log\}
+  \label{eq:store}
+\end{equation}
+Keeping the stores separate preserves each artifact type's identity through retrieval and lets the next stage control how much evidence comes from each source.
+
+\subsection{Stratified Retrieval}
+\label{sec:stratified}
+
+Given a fault description $q$, chunks are scored by the cosine similarity $\text{sim}(q, c)$ between $\phi(q)$ and $\phi(c)$. \textsc{SafLoc} retrieves independently from each store rather than ranking all chunks together:
+\begin{equation}
+  R_t = \underset{S \subseteq D_t,\ |S| = k}{\arg\max} \sum_{c \in S} \text{sim}(q, c), \qquad t \in \{code, config, log\}
+  \label{eq:stratified}
+\end{equation}
+with $k = 3$ in our current configuration, returning $R = R_{code} \cup R_{config} \cup R_{log}$. We contrast this with \emph{unified retrieval}, which ranks the union of all chunks together and takes the overall top $3k$:
+\begin{equation}
+  R_{unified} = \underset{S \subseteq D_{code} \cup D_{config} \cup D_{log},\ |S| = 3k}{\arg\max} \sum_{c \in S} \text{sim}(q, c)
+  \label{eq:unified}
+\end{equation}
+
+The two properties below are deliberately elementary: they state the design rationale precisely and delimit what each choice does and does not buy.
+
+\begin{proposition}[Stratified coverage]
+\label{prop:coverage}
+If $|D_t| \ge k$ for every modality $t$, stratified retrieval guarantees $|R \cap D_t| = k$ for every modality $t$. Unified retrieval offers no such guarantee: there exist similarity distributions for which $R_{unified} \cap D_t = \emptyset$ for some modality $t$, even when $|D_t| \ge k$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+The first claim is immediate: each $R_t$ is drawn from $D_t$ alone with cardinality $k$. For the second, suppose every code and log chunk scores above every configuration chunk, plausible in practice since log text and code identifiers share more surface vocabulary with a fault description than a configuration diff does; if $|D_{code}| + |D_{log}| \ge 3k$, the overall top $3k$ contains no configuration chunk.
+\end{proof}
+
+This formalizes the log-dominated retrieval failure mode we observed during development, consistent with the context-imbalance effects reported by Liu et al.~\cite{liu2024lostinmiddle}.
+
+\subsection{Augmented Prompting and Structured Output}
+\label{sec:prompting}
+
+The retrieved chunks are assembled into a prompt with three instruction blocks: one steering the model to look for logic errors, API misuse, and missing handlers in $R_{code}$; one steering it to look for misconfiguration, permission gaps, and resource constraints in $R_{config}$; and one asking it to use the symptom evident in $R_{log}$ to scope the search. The model must return the four fields of the diagnosis $y$ defined in Section~\ref{sec:architecture}: the fault location $f_{loc}$, the symptom category $s_{sym}$, the root-cause category $r_{cause}$ aligned with the taxonomy of Xie et al.~\cite{xie2025understanding}, and the supporting evidence $e$. Decoding additionally enforces a grounding constraint: $f_{loc}(y)$ must name a file path present among the retrieved chunks $R$, and a prediction naming any other path is rejected and the model is asked to revise.
+
+\begin{proposition}[Bounded hallucination under grounding]
+\label{prop:grounding}
+If the decoding procedure enforces $f_{loc}(y) \in \{\text{path}(c) : c \in R\}$ for every returned prediction $y$, then the hallucination rate, defined as the fraction of predictions naming a file absent from the indexed corpus $\mathcal{F}_{idx}$, is zero.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Every chunk in $R$ originates from ingestion of the indexed artifacts (Eq.~\eqref{eq:store}), so any path copied from $R$ lies in $\mathcal{F}_{idx}$.
+\end{proof}
+
+We emphasize that Proposition~\ref{prop:grounding} is a structural property of the decoding procedure, not a claim about the correctness of the location itself: a grounded prediction can still name the wrong file among those retrieved. The property only rules out the specific failure mode of naming a file the corpus does not contain, and it holds only insofar as the reject-and-revise constraint of Section~\ref{sec:prompting} is actually enforced by the deployment. Computationally the pipeline is light: ingestion is linear in the total number of tokens, and exact nearest-neighbor retrieval per modality suffices because a single application yields only a small corpus.
+
+\section{Evaluation Methodology}
+\label{sec:evaluation}
+
+\subsection{Baselines for Comparison}
+\label{sec:baselines}
+
+We evaluate \textsc{SafLoc} against a representative cross-section of the state-of-the-art approaches summarized in Table~\ref{tab:sota}, drawn from all four methodological families: LLM-based diagnosis (LLMAO~\cite{yang2024llmao}, FaceIt~\cite{shan2024faceit}, and RCACopilot~\cite{chen2024rcacopilot}), deep-learning log and multi-source models (DeepLog~\cite{du2017deeplog}, HADES~\cite{lee2023hades}, and Eadro~\cite{lee2023eadro}), classical machine-learning trace analyzers (MEPFL~\cite{zhou2019mepfl} and TraceRCA~\cite{li2021tracerca}), and rule-based or heuristic root-cause analyzers (MicroRCA~\cite{wu2020microrca} and Pinpoint~\cite{chen2002pinpoint}). Together with our internal retrieval ablations, these systems span the design space from single-artifact diagnosis to multi-source fusion.
+
+A methodological caveat governs this comparison. Several baselines were not designed for serverless environments: DeepLog and FaceIt target distributed batch systems, and HADES, Eadro, MEPFL, TraceRCA, and MicroRCA expect the continuous metric and trace streams that short-lived invocations do not produce. We include them nonetheless, adapting each to the artifacts available in our setting, because each defines a well-understood mechanism for ranking suspicious elements that can be scored against our gold fault locations, and because they show whether techniques built for other environments can still surface the cross-artifact evidence a developer needs when the only post-mortem signals are the log, the code, and the configuration. Where a baseline requires inputs our setting cannot supply, we provide the closest available artifact and record the substitution, so the comparison isolates the effect of tri-context retrieval rather than differences in input availability.
+
+\subsection{Metrics}
+
+We report five metrics over the labeled test set $\mathcal{T} = \{\tau_1, \dots, \tau_N\}$ of $N$ fault cases, each with a gold fault file $f_\tau^*$, gold symbol $s_\tau^*$, and gold root-cause category $r_\tau^*$. Retrieval recall at $k$ for modality $t$ measures whether the gold file appears among the top-$k$ retrieved chunks of that modality:
+\begin{equation}
+  \text{Recall@}k_t = \frac{1}{N} \sum_{\tau \in \mathcal{T}} \mathbb{1}\!\left[f_\tau^* \in \text{top}_k(R_\tau^t)\right], \quad t \in \{code, config, log\}
+  \label{eq:recall}
+\end{equation}
+The remaining four metrics are indicator averages of the same form. \emph{Location precision} (LocPrec) counts a prediction correct when $\text{basename}(\hat f_\tau) = \text{basename}(f_\tau^*)$; \emph{symbol match} (SymMatch) when the predicted function or symbol equals $s_\tau^*$; \emph{root-cause accuracy} (RCA) when the predicted category equals $r_\tau^*$ after normalizing synonymous category names; and the \emph{hallucination rate} (Halluc) counts predictions naming a file absent from the indexed corpus $\mathcal{F}_{idx}$. By Proposition~\ref{prop:grounding}, Halluc is zero for any configuration of \textsc{SafLoc} that enforces the grounding constraint of Section~\ref{sec:prompting}; the other four metrics depend on model capability and carry no structural guarantee.
+
+\subsection{Results}
+\label{sec:results}
+
+We run every method from Section~\ref{sec:baselines} on all 107 triplets locally, with Qwen2.5-Coder-7B as the diagnosis model, BGE-M3 as the embedder, and a per-modality budget of $k=3$. Localization is scored over the 91 triplets with a gold fault file and the 88 with a gold symbol; root-cause accuracy over all 107 using the model-assisted labels. Every point estimate carries a 95\% confidence interval from 5{,}000 bootstrap resamples over fault instances. Table~\ref{tab:results_ci} reports the aggregate comparison.
+
+\begin{table}[t]
+  \centering
+  \caption{Overall comparison on the 107-triplet Knative dataset with 95\% bootstrap confidence intervals (5{,}000 resamples over fault instances); local Qwen2.5-Coder-7B + BGE-M3, $k=3$. `\texttt{--}' marks a metric not applicable to a method. \textsc{SafLoc} is ours.}
+  \label{tab:results_ci}
+  \setlength{\tabcolsep}{3pt}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lcccccc}
+    \toprule
+    Method & Recall@1 & Recall@3 & LocPrec & SymMatch & RCA & Halluc \\
+    \midrule
+    log\_only & -- & -- & 0.044 [0.01,0.09] & 0.023 [0.00,0.06] & 0.364 [0.27,0.46] & 1.000 [1.00,1.00] \\
+    llm\_only & -- & -- & 0.033 [0.00,0.08] & 0.023 [0.00,0.06] & 0.542 [0.45,0.64] & 0.979 [0.95,1.00] \\
+    unstructured & 0.231 [0.14,0.32] & 0.253 [0.16,0.34] & 0.242 [0.15,0.33] & 0.068 [0.02,0.12] & 0.551 [0.46,0.64] & 0.673 [0.58,0.76] \\
+    DeepLog & 0.286 [0.20,0.38] & 0.363 [0.26,0.46] & 0.297 [0.21,0.40] & -- & -- & 0.000 [0.00,0.00] \\
+    HADES & 0.110 [0.05,0.18] & 0.154 [0.09,0.23] & 0.110 [0.05,0.18] & -- & -- & 0.000 [0.00,0.00] \\
+    Eadro & 0.088 [0.03,0.15] & 0.143 [0.08,0.22] & 0.088 [0.03,0.15] & -- & -- & 0.000 [0.00,0.00] \\
+    MEPFL & -- & -- & -- & -- & 0.841 [0.77,0.91] & -- \\
+    TraceRCA & -- & -- & -- & -- & 0.598 [0.50,0.69] & -- \\
+    LLMAO & 0.286 [0.20,0.38] & 0.363 [0.26,0.46] & 0.363 [0.26,0.46] & 0.023 [0.00,0.06] & 0.654 [0.56,0.74] & 0.000 [0.00,0.00] \\
+    FaceIt & 0.286 [0.20,0.38] & 0.363 [0.26,0.46] & 0.121 [0.05,0.19] & -- & 0.542 [0.45,0.64] & 0.663 [0.57,0.76] \\
+    RCACopilot & 0.286 [0.20,0.38] & 0.363 [0.26,0.46] & 0.352 [0.25,0.45] & -- & 0.832 [0.76,0.90] & 0.000 [0.00,0.00] \\
+    MicroRCA & 0.231 [0.14,0.32] & 0.352 [0.25,0.45] & 0.242 [0.15,0.33] & -- & -- & 0.000 [0.00,0.00] \\
+    Pinpoint & 0.242 [0.15,0.33] & 0.286 [0.20,0.38] & 0.253 [0.16,0.35] & -- & -- & 0.000 [0.00,0.00] \\
+    \midrule
+    \textbf{\textsc{SafLoc}} & 0.297 [0.21,0.40] & 0.374 [0.27,0.47] & 0.352 [0.25,0.45] & 0.193 [0.11,0.28] & 0.822 [0.75,0.89] & 0.000 [0.00,0.00] \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
+
+\paragraph{RQ2: Localization and the value of stratified retrieval.} \textsc{SafLoc} attains the best retrieval recall ($0.374$) and the best symbol match by a wide margin ($0.193$, close to three times the next best), and Table~\ref{tab:sig} shows its location precision is statistically indistinguishable from the strongest specialized baselines (\textsc{LLMAO}, \textsc{RCACopilot}, \textsc{DeepLog}), while those baselines collapse elsewhere (\textsc{LLMAO} reaches only $0.023$ symbol match; \textsc{MEPFL} performs no localization at all). Stratified retrieval is the source: \textsc{SafLoc} significantly exceeds its single-index ablation \texttt{unstructured} ($+0.110$, $p=0.042$) and its log-only ablation ($+0.308$, $p<0.001$), an empirical counterpart to Proposition~\ref{prop:coverage}. The gain concentrates where the design should matter (Table~\ref{tab:percat}): on programming-error faults it ties the best code-oriented baselines ($0.29$); on configuration-origin faults it reaches $0.52$ where \texttt{log\_only} localizes none and the combined index reaches $0.24$; and on the fifteen faults whose fix touches both code and configuration it is the only method with non-zero location precision ($0.13$). \emph{Answer to RQ2:} \textsc{SafLoc} matches the best single-artifact localizer overall, stays accurate on the cross-artifact faults those localizers miss, and stratified retrieval is the component responsible.
+
+\begin{table}[t]
+  \centering
+  \caption{Paired bootstrap differences, \textsc{SafLoc} $-$ baseline, over the shared evaluation set (95\% CI, two-sided $p$, 5{,}000 resamples). Bold rows differ significantly; all significant differences favor \textsc{SafLoc}.}
+  \label{tab:sig}
+  \setlength{\tabcolsep}{5pt}
+  \footnotesize
+  \begin{tabular}{llrcc}
+    \toprule
+    Metric & Baseline & Diff & 95\% CI & $p$ \\
+    \midrule
+    LocPrec & LLMAO & $-0.011$ & $[-0.099,+0.077]$ & $0.90$ \\
+    LocPrec & RCACopilot & $0.000$ & $[-0.088,+0.088]$ & $1.00$ \\
+    LocPrec & DeepLog & $+0.055$ & $[-0.044,+0.154]$ & $0.32$ \\
+    \textbf{LocPrec} & \textbf{unstructured} & $\mathbf{+0.110}$ & $\mathbf{[+0.011,+0.209]}$ & $\mathbf{0.042}$ \\
+    \textbf{LocPrec} & \textbf{log\_only} & $\mathbf{+0.308}$ & $\mathbf{[+0.198,+0.418]}$ & $\mathbf{<0.001}$ \\
+    RCA & MEPFL & $-0.019$ & $[-0.065,+0.028]$ & $0.53$ \\
+    RCA & RCACopilot & $-0.009$ & $[-0.065,+0.047]$ & $0.85$ \\
+    \textbf{RCA} & \textbf{LLMAO} & $\mathbf{+0.168}$ & $\mathbf{[+0.075,+0.262]}$ & $\mathbf{<0.001}$ \\
+    \textbf{RCA} & \textbf{TraceRCA} & $\mathbf{+0.224}$ & $\mathbf{[+0.112,+0.327]}$ & $\mathbf{<0.001}$ \\
+    \textbf{RCA} & \textbf{log\_only} & $\mathbf{+0.458}$ & $\mathbf{[+0.346,+0.561]}$ & $\mathbf{<0.001}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{RQ3: Root-cause analysis and balance across fault types.} \textsc{SafLoc} reaches $0.822$ root-cause accuracy, statistically indistinguishable from the two strongest specialists (\textsc{MEPFL}, \textsc{RCACopilot}) and significantly ahead of \textsc{LLMAO}, \textsc{TraceRCA}, and the log-only ablation (Table~\ref{tab:sig}). Its distinguishing property is balance (Table~\ref{tab:percat}): it scores $0.84$ on programming-error and $0.83$ on configuration-error faults, whereas \textsc{LLMAO} ($0.80$ vs $0.50$) and \textsc{FaceIt} ($0.36$ vs $0.86$) are each strong on one category only; \textsc{SafLoc}'s $0.83$ and \textsc{FaceIt}'s $0.86$ on configuration faults have overlapping intervals, a tie rather than a shortfall. Two caveats apply: the gold labels are LLM-generated (Section~\ref{sec:baselines}) with the same open-model family several baselines use, so we read the ties as corroborating rather than definitive; and the Dependency-error category, with only four instances against its $21.98\%$ taxonomy share~\cite{xie2025understanding}, is omitted from Table~\ref{tab:percat} as uninformative. \emph{Answer to RQ3:} \textsc{SafLoc} matches the best specialized root-cause classifier and is the only method accurate across both dominant fault categories at once.
+
+\paragraph{RQ4: Grounding and hallucinated locations.} Every generative configuration that enforces the path constraint attains a hallucination rate of $0.000$, exactly as Proposition~\ref{prop:grounding} predicts, while the ungrounded ones invent absent file paths at rates from $0.673$ (\texttt{unstructured}) to $1.000$ (\texttt{log\_only}). Ranking-based baselines also report $0.000$, but only because they can never emit a path outside the corpus; the property matters precisely for generative methods that write a free-form file name. \emph{Answer to RQ4:} corpus-grounded decoding removes hallucinated fault locations outright in the setting where they otherwise dominate.
+
+\begin{table}[t]
+  \centering
+  \caption{Per-category results (point [95\% CI]): location precision and root-cause accuracy on programming-error (n=61) and configuration-error (n=42) faults. The four dependency-error instances are omitted as statistically uninformative (Section~\ref{sec:threats}). `\texttt{--}' = metric not applicable.}
+  \label{tab:percat}
+  \setlength{\tabcolsep}{3pt}
+  \footnotesize
+  \begin{tabular}{lcccc}
+    \toprule
+    & \multicolumn{2}{c}{LocPrec} & \multicolumn{2}{c}{RCA} \\
+    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+    Method & Prog. & Config. & Prog. & Config. \\
+    \midrule
+    log\_only & 0.07 [0.02,0.14] & 0.00 [0.00,0.00] & 0.25 [0.15,0.36] & 0.57 [0.43,0.71] \\
+    llm\_only & 0.05 [0.00,0.12] & 0.00 [0.00,0.00] & 0.54 [0.41,0.66] & 0.60 [0.45,0.74] \\
+    unstructured & 0.26 [0.16,0.38] & 0.24 [0.10,0.41] & 0.46 [0.34,0.59] & 0.69 [0.55,0.83] \\
+    DeepLog & 0.24 [0.14,0.36] & 0.45 [0.28,0.62] & -- & -- \\
+    HADES & 0.10 [0.03,0.19] & 0.14 [0.03,0.28] & -- & -- \\
+    Eadro & 0.14 [0.05,0.24] & 0.00 [0.00,0.00] & -- & -- \\
+    MEPFL & -- & -- & 0.85 [0.75,0.93] & 0.81 [0.69,0.93] \\
+    TraceRCA & -- & -- & 0.75 [0.64,0.85] & 0.43 [0.29,0.57] \\
+    LLMAO & 0.29 [0.17,0.41] & 0.55 [0.38,0.72] & 0.80 [0.70,0.90] & 0.50 [0.36,0.67] \\
+    FaceIt & 0.16 [0.07,0.26] & 0.07 [0.00,0.17] & 0.36 [0.25,0.48] & 0.86 [0.74,0.95] \\
+    RCACopilot & 0.29 [0.17,0.41] & 0.52 [0.34,0.69] & 0.89 [0.80,0.95] & 0.79 [0.67,0.90] \\
+    MicroRCA & 0.29 [0.19,0.41] & 0.17 [0.03,0.31] & -- & -- \\
+    Pinpoint & 0.22 [0.12,0.34] & 0.34 [0.17,0.52] & -- & -- \\
+    \midrule
+    \textbf{\textsc{SafLoc}} & 0.29 [0.17,0.41] & 0.52 [0.34,0.69] & 0.84 [0.74,0.92] & 0.83 [0.71,0.93] \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{RQ5: Retrieval architecture versus model capacity.} The figures above use a 7B open model and retrieval over dataset artifacts rather than full pre-fix repository snapshots, so their absolute magnitudes are conservative (Section~\ref{sec:threats}). To test whether model capacity bounds them, we re-ran the entire pipeline with a larger diagnosis model (Qwen3-14B, reasoning decoding disabled), holding retrieval and gold labels fixed. Neither metric improved significantly under a paired bootstrap: location precision changed by $-0.011$ ($p=0.83$) and root-cause accuracy by $+0.056$ ($95\%$ CI $[0.000,+0.112]$, $p=0.07$). With $n=107$ this test is underpowered, so it shows an absence of detected improvement rather than proof that a larger model cannot help; still, it weighs against the hypothesis that \textsc{SafLoc}'s results come from model size. \emph{Answer to RQ5:} within the range tested, performance is attributable to stratified tri-context retrieval rather than LLM capacity.
+
+\section{Threats to Validity}
+\label{sec:threats}
+
+Our dataset comes from one platform, Knative, and only from issues closed by a linked pull request, which may bias the modality distribution toward well-documented faults; moreover, Table~\ref{tab:modality} records which artifacts each fix touched, a proxy for, not a measurement of, the evidence necessary for diagnosis. The root-cause labels are LLM-generated rather than human-verified, the retrieval corpus is built from issue artifacts rather than full pre-fix repository snapshots, and all methods use a single 7B model and a single embedder (BGE-M3), so the absolute figures are conservative lower bounds and embedder robustness is untested. The Dependency-error category (four instances against a $21.98\%$ taxonomy share) is statistically uninformative, several microservice baselines run through documented adaptations (\textsc{MicroRCA} and \textsc{Pinpoint} on input proxies), the grounding property of Proposition~\ref{prop:grounding} holds only where the path constraint of Section~\ref{sec:prompting} is enforced, and the taxonomy of Xie et al.~\cite{xie2025understanding} may underrepresent fault types rarely reported in public trackers.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Diagnosing a failed serverless invocation is hard for a structural reason: the code, the configuration, and the runtime log each hold part of the explanation, and the platform tears down the running context before anyone can inspect it. In 107 real Knative faults, the fix for roughly two thirds spans more than one artifact type, so single-artifact tools start from incomplete evidence in most cases. \textsc{SafLoc} answers with a simple design, three separate indexes with a fixed retrieval budget each and decoding restricted to retrieved file paths, which guarantees coverage of every artifact type and rules out fabricated paths; both properties held exactly in our experiments. Against ten state-of-the-art baselines under an identical local setup, \textsc{SafLoc} was the only method strong on localization, symbol identification, root-cause prediction, and hallucination at once, with its largest lead on the configuration-origin and cross-artifact faults that single-artifact methods miss, and a larger 14B model brought no significant gain, pointing to evidence gathering rather than model size as the differentiator. Future work includes retrieving from full pre-fix repository snapshots, human-verified labels, and platforms beyond Knative.
+
+\section*{Ethics and Privacy Statement}
+
+This work analyzes only publicly available, already-closed GitHub issues and pull requests from the Knative project; no private data, user telemetry, or personally identifying information was collected. \textsc{SafLoc} is a diagnostic aid rather than an autonomous remediation system, and its predictions should be reviewed by a human operator before being acted on in production.
+
+\begin{credits}
+\subsubsection{\ackname}
+Acknowledgments are omitted to preserve anonymity and will be added in the camera-ready version.
+
+\subsubsection{\discintname}
+The authors have no competing interests to declare that are relevant to the content of this article.
+\end{credits}
+\bibliographystyle{splncs04}
+\bibliography{reference}
+\end{document}

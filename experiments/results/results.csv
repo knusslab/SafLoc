@@ -1,0 +1,2 @@
+method,Recall@3,LocPrec,SymMatch,RCA,Halluc,Time(s),na,note
+SafLoc,0.374,0.341,0.182,0.832,0.000,3.179,False,Ours (enhanced): hybrid dense/lexical retrieval + tri-context prompt + few-shot RCA exemplars (leave-one-out) + self-consistent majority-vote decoding + symbol refinement + grounding.

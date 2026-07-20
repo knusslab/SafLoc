@@ -1,0 +1,72 @@
+{"method": "log_only", "id": "knative/serving#13204", "pred_file": "knative/pkg/reconciler/revision/revision.go", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#13053", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#14705", "pred_file": "/path/to/knative/serving/controller/revision_controller.go", "pred_symbol": "updateDeployment", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15981", "pred_file": "/path/to/log_parser.go", "pred_symbol": "parseRequestLog", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#16204", "pred_file": "pkg/activator/net/revision_backends.go", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15752", "pred_file": "network/error_handler.go", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#13746", "pred_file": "network/error_handler.go", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15755", "pred_file": "/home/runner/work/serving/serving/pkg/reconciler/route/route.go", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15486", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15484", "pred_file": "/path/to/knative/eventing/source/controller/controller.go", "pred_symbol": "reconcile", "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15616", "pred_file": "/path/to/knative/configuration/file.yaml", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8846", "pred_file": "/etc/knative-eventing/config/observability.yaml", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8838", "pred_file": "/pkg/controller/eventing/trigger/controller.go", "pred_symbol": "makeServiceAccountName", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#7393", "pred_file": "/home/prow/go/src/knative.dev/eventing/pkg/kncloudevents/event_dispatcher_test.go", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8581", "pred_file": "/remote-source/knative-eventing/app/pkg/reconciler/inmemorychannel/dispatcher/inmemorychannel.go", "pred_symbol": "newConfigForInMemoryChannel", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3415", "pred_file": "/path/to/git-clone-config.yaml", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#2226", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3489", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3195", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3404", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Dependency Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3183", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3218", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3132", "pred_file": "/knative/pkg/namespace/namespace.go", "pred_symbol": "ValidateNamespace", "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3116", "pred_file": "/path/to/cluster/validation/cluster_checker.go", "pred_symbol": "validateClusterConnectivity", "pred_rootcause": "Dependency Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3175", "pred_file": "/path/to/network/config/file.go", "pred_symbol": "configurePort", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3166", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3151", "pred_file": "/path/to/domain_validation_logic.go", "pred_symbol": "validateDomainFormat", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3026", "pred_file": "/path/to/error_handling_code.go", "pred_symbol": "handleError", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3078", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3065", "pred_file": "/path/to/registry/config/file.go", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3015", "pred_file": "/path/to/error_handling/file.go", "pred_symbol": "handleError", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3021", "pred_file": "/path/to/error_handling/file.go", "pred_symbol": "handleError", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3023", "pred_file": "/path/to/error_handling/file.go", "pred_symbol": "handleError", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3017", "pred_file": "/path/to/error_handling/file.go", "pred_symbol": "handleError", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3024", "pred_file": "/path/to/error_handling_code.go", "pred_symbol": "handleError", "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#2516", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Dependency Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#2545", "pred_file": "func/cmd/invoke.go", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/operator#2009", "pred_file": "knative-operator/pkg/client/injection/reconciler/operator/v1beta1/knativeserving/reconcile.go", "pred_symbol": null, "pred_rootcause": "Dependency Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15352", "pred_file": "network/error_handler.go", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#16162", "pred_file": "/path/to/knative/queue-proxy/config/queue-proxy.yaml", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#11069", "pred_file": "logging/seldon-request-logger.yaml", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15673", "pred_file": "/path/to/router/config/file.go", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15628", "pred_file": "/path/to/knative/serving/controller/controller.go", "pred_symbol": "reconcile", "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8706", "pred_file": "<path>", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8705", "pred_file": "channel/event_receiver.go", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/operator#2201", "pred_file": "/path/to/manifest.yaml", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#15778", "pred_file": "controller/controller.go", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8412", "pred_file": "/Users/me/Downloads/eventing-crds.yaml", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/operator#1975", "pred_file": "knative-operator/templates/operator.yaml", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#16185", "pred_file": "pkg/activator/net/revision_backends_test.go", "pred_symbol": null, "pred_rootcause": "Programming Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#9001", "pred_file": "/test/version_check/check_k8s_version.go", "pred_symbol": null, "pred_rootcause": "Dependency Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8740", "pred_file": "third_party/cert-manager/02-trust-manager.yaml", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3260", "pred_file": "/src/go.mod", "pred_symbol": null, "pred_rootcause": "Configuration Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#2623", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Dependency Error", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#16356", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#16258", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/serving#14692", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#7729", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8407", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8511", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8415", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/eventing#8274", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/client#1946", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3032", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3053", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3057", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3061", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#3041", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/func#2732", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/operator#2283", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/operator#2233", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}
+{"method": "log_only", "id": "knative/operator#2178", "pred_file": null, "pred_symbol": null, "pred_rootcause": "Other", "retrieved_code_paths": [], "na": false}

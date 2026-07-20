@@ -1,0 +1,11 @@
+.env
+data/*.jsonl
+__pycache__/
+*.pyc
+.venv/
+.sixth/
+sigconf.tex
+
+# excluded from the anonymous artifact (internal notes / superseded draft)
+Dataset_collection_methodology_v2.md
+data/*.log

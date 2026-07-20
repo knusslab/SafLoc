@@ -1,0 +1,14 @@
+\begin{table}[t]
+  \centering
+  \caption{Full experimental comparison on the 107-triplet Knative dataset (localization scored over 91 triplets with gold files, 88 with gold symbols; root cause over all 107). All methods run locally with Qwen2.5-Coder-7B + BGE-M3. `\texttt{--}' = metric not applicable to the method; \emph{N/A} rows require monitoring modalities (metrics, traces, or a service graph) absent from this dataset. \textsc{SafLoc} is ours.}
+  \label{tab:fullresults}
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{lcccccc}
+    \toprule
+    Method & Recall@3 & LocPrec & SymMatch & RCA & Halluc & Time (s) \\
+    \midrule
+    \midrule
+    \textbf{\textsc{SafLoc}} & 0.374 & 0.341 & 0.182 & 0.832 & 0.000 & 3.179 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

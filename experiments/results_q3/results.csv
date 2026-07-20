@@ -1,0 +1,15 @@
+method,Recall@3,LocPrec,SymMatch,RCA,Halluc,Time(s),na,note
+llm_only,--,0.099,0.034,0.364,0.970,0.372,False,"Ablation: LLM sees only a short NL description; no retrieval, no grounding."
+log_only,--,0.099,0.034,0.430,0.970,0.368,False,Ablation: LLM sees only the runtime log; no retrieval.
+unstructured,0.253,0.242,0.148,0.570,0.664,0.505,False,"Ablation: single combined index (top-3k), no modality stratification."
+DeepLog,0.363,0.297,--,--,0.000,0.002,False,SOTA-adapted (no LSTM training seq): log-embedding nearest-code localization.
+HADES,0.154,0.110,--,--,0.000,0.003,False,SOTA-adapted (no metrics): log+config cross-modal score fusion for code localization.
+Eadro,0.143,0.088,--,--,0.000,0.004,False,SOTA-adapted (no metrics/traces): log+code+config multi-source score fusion.
+MEPFL,--,--,--,0.850,--,1.352,False,SOTA-adapted (no traces): TF-IDF + logistic-regression root-cause classifier (leave-one-out).
+TraceRCA,--,--,--,0.598,--,0.000,False,SOTA-adapted (no traces): embedding kNN root-cause classifier (leave-one-out).
+LLMAO,0.363,0.352,0.102,0.523,0.000,0.473,False,SOTA (LLM code FL): LLM over retrieved code candidates only.
+FaceIt,0.363,0.055,--,0.458,0.879,0.518,False,"SOTA (2-stage LLM): stage-1 config-vs-code routing from log, stage-2 localize."
+RCACopilot,0.363,0.352,--,0.729,0.000,0.485,False,SOTA (retrieve-similar-incident + LLM RCA): kNN incident prior + LLM.
+MicroRCA,0.352,0.242,--,--,0.000,0.000,False,SOTA-adapted (no service graph/metrics): personalized-PageRank anomaly propagation over an embedding-similarity file graph.
+Pinpoint,0.286,0.253,--,--,0.000,0.001,False,"SOTA-adapted (no request traces): cluster corpus files, localize within the query-correlated cluster."
+SafLoc,0.374,0.341,0.136,0.888,0.000,1.030,False,Ours (enhanced): hybrid dense/lexical retrieval + tri-context prompt + few-shot RCA exemplars (leave-one-out) + symbol refinement + grounding.

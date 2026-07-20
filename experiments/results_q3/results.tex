@@ -1,0 +1,27 @@
+\begin{table}[t]
+  \centering
+  \caption{Full experimental comparison on the 107-triplet Knative dataset (localization scored over 91 triplets with gold files, 88 with gold symbols; root cause over all 107). All methods run locally with Qwen2.5-Coder-7B + BGE-M3. `\texttt{--}' = metric not applicable to the method; \emph{N/A} rows require monitoring modalities (metrics, traces, or a service graph) absent from this dataset. \textsc{SafLoc} is ours.}
+  \label{tab:fullresults}
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{lcccccc}
+    \toprule
+    Method & Recall@3 & LocPrec & SymMatch & RCA & Halluc & Time (s) \\
+    \midrule
+    llm\_only & -- & 0.099 & 0.034 & 0.364 & 0.970 & 0.372 \\
+    log\_only & -- & 0.099 & 0.034 & 0.430 & 0.970 & 0.368 \\
+    unstructured & 0.253 & 0.242 & 0.148 & 0.570 & 0.664 & 0.505 \\
+    DeepLog & 0.363 & 0.297 & -- & -- & 0.000 & 0.002 \\
+    HADES & 0.154 & 0.110 & -- & -- & 0.000 & 0.003 \\
+    Eadro & 0.143 & 0.088 & -- & -- & 0.000 & 0.004 \\
+    MEPFL & -- & -- & -- & 0.850 & -- & 1.352 \\
+    TraceRCA & -- & -- & -- & 0.598 & -- & 0.000 \\
+    LLMAO & 0.363 & 0.352 & 0.102 & 0.523 & 0.000 & 0.473 \\
+    FaceIt & 0.363 & 0.055 & -- & 0.458 & 0.879 & 0.518 \\
+    RCACopilot & 0.363 & 0.352 & -- & 0.729 & 0.000 & 0.485 \\
+    MicroRCA & 0.352 & 0.242 & -- & -- & 0.000 & 0.000 \\
+    Pinpoint & 0.286 & 0.253 & -- & -- & 0.000 & 0.001 \\
+    \midrule
+    \textbf{\textsc{SafLoc}} & 0.374 & 0.341 & 0.136 & 0.888 & 0.000 & 1.030 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

@@ -1,0 +1,23 @@
+\begin{table}[t]
+  \centering
+  \caption{Root-cause accuracy by category (point [95\% CI]).}
+  \label{tab:percat_rca}
+  \setlength{\tabcolsep}{4pt}
+  \footnotesize
+  \begin{tabular}{lccc}
+    \toprule
+    Method & Programming~(n=61) & Configuration~(n=42) & Dependency~(n=4) \\
+    \midrule
+    log\_only & 0.25 [0.15,0.36] & 0.57 [0.43,0.71] & 0.00 [0.00,0.00] \\
+    llm\_only & 0.54 [0.41,0.66] & 0.60 [0.45,0.74] & 0.00 [0.00,0.00] \\
+    unstructured & 0.46 [0.34,0.59] & 0.69 [0.55,0.83] & 0.50 [0.00,1.00] \\
+    MEPFL & 0.85 [0.75,0.93] & 0.81 [0.69,0.93] & 1.00 [1.00,1.00] \\
+    TraceRCA & 0.75 [0.64,0.85] & 0.43 [0.29,0.57] & 0.00 [0.00,0.00] \\
+    LLMAO & 0.80 [0.70,0.90] & 0.50 [0.36,0.67] & 0.00 [0.00,0.00] \\
+    FaceIt & 0.36 [0.25,0.48] & 0.86 [0.74,0.95] & 0.00 [0.00,0.00] \\
+    RCACopilot & 0.89 [0.80,0.95] & 0.79 [0.67,0.90] & 0.50 [0.00,1.00] \\
+    \midrule
+    \textbf{\textsc{SafLoc}} & 0.84 [0.74,0.92] & 0.83 [0.71,0.93] & 0.50 [0.00,1.00] \\
+    \bottomrule
+  \end{tabular}
+\end{table}

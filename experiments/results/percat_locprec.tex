@@ -1,0 +1,26 @@
+\begin{table}[t]
+  \centering
+  \caption{Location precision by root-cause category (point [95\% CI]). Config-origin faults are where tri-context retrieval helps most.}
+  \label{tab:percat_locprec}
+  \setlength{\tabcolsep}{4pt}
+  \footnotesize
+  \begin{tabular}{lccc}
+    \toprule
+    Method & Programming~(n=61) & Configuration~(n=42) & Dependency~(n=4) \\
+    \midrule
+    log\_only & 0.07 [0.02,0.14] & 0.00 [0.00,0.00] & 0.00 [0.00,0.00] \\
+    llm\_only & 0.05 [0.00,0.12] & 0.00 [0.00,0.00] & 0.00 [0.00,0.00] \\
+    unstructured & 0.26 [0.16,0.38] & 0.24 [0.10,0.41] & 0.00 [0.00,0.00] \\
+    DeepLog & 0.24 [0.14,0.36] & 0.45 [0.28,0.62] & 0.00 [0.00,0.00] \\
+    HADES & 0.10 [0.03,0.19] & 0.14 [0.03,0.28] & 0.00 [0.00,0.00] \\
+    Eadro & 0.14 [0.05,0.24] & 0.00 [0.00,0.00] & 0.00 [0.00,0.00] \\
+    LLMAO & 0.29 [0.17,0.41] & 0.55 [0.38,0.72] & 0.00 [0.00,0.00] \\
+    FaceIt & 0.16 [0.07,0.26] & 0.07 [0.00,0.17] & 0.00 [0.00,0.00] \\
+    RCACopilot & 0.29 [0.17,0.41] & 0.52 [0.34,0.69] & 0.00 [0.00,0.00] \\
+    MicroRCA & 0.29 [0.19,0.41] & 0.17 [0.03,0.31] & 0.00 [0.00,0.00] \\
+    Pinpoint & 0.22 [0.12,0.34] & 0.34 [0.17,0.52] & 0.00 [0.00,0.00] \\
+    \midrule
+    \textbf{\textsc{SafLoc}} & 0.29 [0.17,0.41] & 0.52 [0.34,0.69] & 0.00 [0.00,0.00] \\
+    \bottomrule
+  \end{tabular}
+\end{table}

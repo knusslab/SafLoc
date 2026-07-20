@@ -1,0 +1,107 @@
+{"id": "knative/serving#13204", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "unnecessary hammering on the API server", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#13053", "bucket": "log_code", "root_cause": "Dependency Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#14705", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "Operation cannot be fulfilled on deployments.apps \"hello-00001-deployment\": the object has been modified; please apply your changes to the latest version and try again", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15981", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "500", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#16204", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "race detected during execution of test", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15752", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#13746", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15755", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "error is not nil (line 370) but it returns nil (nilerr)", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15486", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15484", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15616", "bucket": "log_code", "root_cause": "Dependency Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8846", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8838", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "permission denied", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#7393", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "connection refused", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8581", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3415", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "authentication required: HTTP Basic: Access denied", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#2226", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "docker/podman API not available", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3489", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "tls: failed to verify certificate", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3195", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3404", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "deploy error", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3183", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "permission denied", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3218", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "unknown command", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3132", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "technical Knative API error instead of validation error", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3116", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "timeout", "confidence": 0.95, "needs_review": false}
+{"id": "knative/func#3175", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "Port 99999 exceeds the OS range (max 65535)", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3166", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "unknown flag", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3151", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "Generic build error, no indication domain naming is the issue", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3026", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3078", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3065", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "generic 'failed to fetch builder image' error", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3015", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "None", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3021", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "user-friendly error message", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3023", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "None", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3017", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "No error message provided in the runtime log", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3024", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#2516", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "permission denied", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#2545", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "500", "confidence": 1.0, "needs_review": false}
+{"id": "knative/operator#2009", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "connection refused", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#13204", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "unnecessary hammering on the API server", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#13053", "bucket": "log_code", "root_cause": "Dependency Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#14705", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "Operation cannot be fulfilled on deployments.apps \"hello-00001-deployment\": the object has been modified; please apply your changes to the latest version and try again", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15981", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "500", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#16204", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "race detected during execution of test", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15752", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#13746", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15755", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "error is not nil (line 370) but it returns nil (nilerr)", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15486", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15484", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15616", "bucket": "log_code", "root_cause": "Dependency Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8846", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8838", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "permission denied", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#7393", "bucket": "log_code", "root_cause": "Configuration Error", "symptom": "connection refused", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8581", "bucket": "log_code", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15352", "bucket": "log_code_config", "root_cause": "Programming Error", "symptom": "context canceled", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#16162", "bucket": "log_code_config", "root_cause": "Configuration Error", "symptom": "TLS handshake error from client", "confidence": 0.95, "needs_review": false}
+{"id": "knative/serving#11069", "bucket": "log_code_config", "root_cause": "Configuration Error", "symptom": "validation failed", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15673", "bucket": "log_code_config", "root_cause": "Programming Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15628", "bucket": "log_code_config", "root_cause": "Programming Error", "symptom": "permission denied", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8706", "bucket": "log_code_config", "root_cause": "Configuration Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8705", "bucket": "log_code_config", "root_cause": "Configuration Error", "symptom": "could not get applying event policies of channel", "confidence": 1.0, "needs_review": false}
+{"id": "knative/operator#2201", "bucket": "log_code_config", "root_cause": "Configuration Error", "symptom": "failed to apply non rbac manifest: namespaces \"istio-system\" not found", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15352", "bucket": "log_code_config", "root_cause": "Programming Error", "symptom": "context canceled", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#16162", "bucket": "log_code_config", "root_cause": "Configuration Error", "symptom": "TLS handshake error from client", "confidence": 0.95, "needs_review": false}
+{"id": "knative/serving#11069", "bucket": "log_code_config", "root_cause": "Configuration Error", "symptom": "validation failed", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15673", "bucket": "log_code_config", "root_cause": "Programming Error", "symptom": "timeout", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15628", "bucket": "log_code_config", "root_cause": "Programming Error", "symptom": "permission denied", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8706", "bucket": "log_code_config", "root_cause": "Configuration Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8705", "bucket": "log_code_config", "root_cause": "Configuration Error", "symptom": "could not get applying event policies of channel", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15778", "bucket": "log_config", "root_cause": "Configuration Error", "symptom": "401 Unauthorized", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8412", "bucket": "log_config", "root_cause": "Configuration Error", "symptom": "yamllint error", "confidence": 1.0, "needs_review": false}
+{"id": "knative/operator#1975", "bucket": "log_config", "root_cause": "Configuration Error", "symptom": "YAML parse error", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#15778", "bucket": "log_config", "root_cause": "Configuration Error", "symptom": "401 Unauthorized", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8412", "bucket": "log_config", "root_cause": "Configuration Error", "symptom": "yamllint error", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#16185", "bucket": "log_only", "root_cause": "Programming Error", "symptom": "FAIL: TestProbePodIPs", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#9001", "bucket": "log_only", "root_cause": "Configuration Error", "symptom": "timeout", "confidence": 0.9, "needs_review": false}
+{"id": "knative/eventing#8740", "bucket": "log_only", "root_cause": "Configuration Error", "symptom": "connection refused", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3260", "bucket": "log_only", "root_cause": "Programming Error", "symptom": "go: errors parsing go.mod", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#2623", "bucket": "log_only", "root_cause": "Configuration Error", "symptom": "crashloop", "confidence": 0.95, "needs_review": false}
+{"id": "knative/serving#16185", "bucket": "log_only", "root_cause": "Programming Error", "symptom": "FAIL: TestProbePodIPs", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#9001", "bucket": "log_only", "root_cause": "Configuration Error", "symptom": "timeout", "confidence": 0.9, "needs_review": false}
+{"id": "knative/eventing#8740", "bucket": "log_only", "root_cause": "Configuration Error", "symptom": "connection refused", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#16356", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#16258", "bucket": "other", "root_cause": "Configuration Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#14692", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#7729", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8407", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8511", "bucket": "other", "root_cause": "Configuration Error", "symptom": "", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8415", "bucket": "other", "root_cause": "Configuration Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8274", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/client#1946", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3032", "bucket": "other", "root_cause": "Programming Error", "symptom": "", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3053", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3057", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3061", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#3041", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/func#2732", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/operator#2283", "bucket": "other", "root_cause": "Configuration Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/operator#2233", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/operator#2178", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#16356", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#16258", "bucket": "other", "root_cause": "Configuration Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/serving#14692", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#7729", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8407", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8511", "bucket": "other", "root_cause": "Configuration Error", "symptom": "", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8415", "bucket": "other", "root_cause": "Configuration Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}
+{"id": "knative/eventing#8274", "bucket": "other", "root_cause": "Programming Error", "symptom": "crashloop", "confidence": 1.0, "needs_review": false}

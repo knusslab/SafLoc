@@ -1,0 +1,11 @@
+metric,baseline,safloc_minus_baseline,ci_lo,ci_hi,p,n,significant
+LocPrec,LLMAO,-0.0110,-0.0989,0.0769,0.8956,91,False
+LocPrec,RCACopilot,0.0000,-0.0879,0.0879,1.0000,91,False
+LocPrec,DeepLog,0.0549,-0.0440,0.1538,0.3184,91,False
+LocPrec,unstructured,0.1099,0.0110,0.2088,0.0420,91,True
+LocPrec,log_only,0.3077,0.1978,0.4176,0.0000,91,True
+RCA,MEPFL,-0.0187,-0.0654,0.0280,0.5272,107,False
+RCA,RCACopilot,-0.0093,-0.0654,0.0467,0.8500,107,False
+RCA,TraceRCA,0.2243,0.1121,0.3271,0.0000,107,True
+RCA,LLMAO,0.1682,0.0748,0.2617,0.0004,107,True
+RCA,log_only,0.4579,0.3458,0.5607,0.0000,107,True
