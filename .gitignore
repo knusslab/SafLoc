@@ -9,3 +9,4 @@ sigconf.tex
 # excluded from the anonymous artifact (internal notes / superseded draft)
 Dataset_collection_methodology_v2.md
 data/*.log
+ICSOC_main.tex
