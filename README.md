@@ -1,4 +1,4 @@
-# SafLoc — Silent Failure Localization for Serverless Applications
+# SafLoc: Silent Failure Localization for Serverless Applications
 
 Artifact for the paper *"Silent Failures in Stateless Systems: A Tri-Context
 RAG-Augmented LLM for Fault Localization in Serverless Applications"*
